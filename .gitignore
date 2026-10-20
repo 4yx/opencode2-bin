@@ -1,5 +1,4 @@
 # Local build artifacts (never commit)
 src/
 pkg/
-*.deb
 *.pkg.tar.*

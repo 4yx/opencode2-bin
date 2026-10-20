@@ -111,8 +111,8 @@ jobs:
       - name: Read current version from repo PKGBUILD
         id: current
         run: |
-          pkgver=$(grep -E '^pkgver=' opencode2-bin/PKGBUILD | head -1 | cut -d= -f2)
-          pkgrel=$(grep -E '^pkgrel=' opencode2-bin/PKGBUILD | head -1 | cut -d= -f2)
+          pkgver=$(grep -E '^pkgver=' PKGBUILD | head -1 | cut -d= -f2)
+          pkgrel=$(grep -E '^pkgrel=' PKGBUILD | head -1 | cut -d= -f2)
           echo "version=$pkgver" >> "$GITHUB_OUTPUT"
           # Full pkgver-pkgrel, same shape as the AUR RPC "Version" field, so
           # the compare step also catches pkgrel-only drift (fix commits) and
@@ -155,7 +155,7 @@ jobs:
     if: needs.check.outputs.has_update == 'true'
     uses: ./.github/workflows/update-aur.yml
     with:
-      pkgdir: opencode2-bin
+      pkgdir: .
       aur_name: opencode2-bin
       version: ${{ needs.check.outputs.new_version }}
       checksum: ${{ needs.check.outputs.checksum }}

@@ -50,7 +50,7 @@ _pb="${pkgbase:-$pkgname}"
     # Arch-specific attributes. Same shape and ordering as `makepkg
     # --printsrcinfo`: per arch, source/relations first, then hash sums in
     # known_hash_algos order (ck, md5, sha1..sha512, b2). Omitted when the
-    # package only uses flat arrays (e.g. devin-desktop-next).
+    # package only uses flat arrays.
     for _a in "${arch[@]}"; do
         [[ "$_a" = any ]] && continue
         for _attr in source provides conflicts depends replaces optdepends makedepends checkdepends; do

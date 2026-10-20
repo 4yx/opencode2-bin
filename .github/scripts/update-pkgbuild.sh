@@ -2,20 +2,15 @@
 # Update volatile fields in a package's PKGBUILD, in place.
 #
 # When pkgver changes, pkgrel is reset to 1. Checksum entries (the downloaded
-# artifact) and, if needed, _apt_pool are also rewritten. The rest of the
-# PKGBUILD — depends, package(), desktop-file references — is left untouched,
-# so hand-edits survive.
+# artifact) are also rewritten. The rest of the PKGBUILD — depends, package(),
+# source URLs — is left untouched, so hand-edits survive.
 #
-# Usage: update-pkgbuild.sh <pkgdir> <arch_version> <checksum> [apt_filename] [aarch64_checksum]
+# Usage: update-pkgbuild.sh <pkgdir> <arch_version> <checksum> [aarch64_checksum]
 #   pkgdir             directory containing PKGBUILD (relative to repo root)
-#   arch_version       version in Arch format (e.g. 3.1.1005_next.296eca6010
-#                      or 0.0.0_next_17444)
+#   arch_version       version in Arch format (e.g. 2.0.32 or 0.0.0_beta_19271)
 #   checksum           hex sha256 (64 chars) or sha512 (128 chars) of the
 #                      primary artifact (source[0] of the flat array, or the
 #                      x86_64 entry of an arch-specific array)
-#   apt_filename       optional path from the APT Packages file (e.g.
-#                      pool/main/d/devin-desktop-next/Devin-linux-x64-3.1.1005+next.x.deb);
-#                      used to detect and follow pool directory changes.
 #   aarch64_checksum   optional hex checksum for the aarch64 entry of an
 #                      arch-specific checksum array (npm-sourced packages)
 
@@ -24,8 +19,7 @@ set -euo pipefail
 PKGDIR="$1"
 NEW_VERSION="$2"
 NEW_CHECKSUM="$3"
-NEW_FILENAME="${4:-}"
-NEW_AARCH64_CHECKSUM="${5:-}"
+NEW_AARCH64_CHECKSUM="${4:-}"
 
 if [[ ! "$NEW_VERSION" =~ ^[a-zA-Z0-9._]+$ ]]; then
     echo "Error: Invalid version format: $NEW_VERSION" >&2
@@ -76,7 +70,7 @@ fi
 
 # 2) checksums. Replace the first entry in each checksum array that matches a
 # given declaration. For flat arrays the artifact is always source[0]; for
-# arch-specific arrays (npm-sourced packages) each arch gets its own value.
+# arch-specific arrays each arch gets its own value.
 replace_checksum() {
     local array_re="$1" newval="$2"
     awk -v re="$array_re" -v new="$newval" '
@@ -105,16 +99,6 @@ if grep -qE '^sha(256|512)sums_(x86_64|aarch64)=\(' "$PKGBUILD"; then
     fi
 else
     replace_checksum '^sha(256|512)sums=[(]' "$NEW_CHECKSUM"
-fi
-
-# 3) follow pool directory changes if the APT Packages file moved the deb
-if [[ -n "$NEW_FILENAME" ]]; then
-    new_pool="$(dirname "$NEW_FILENAME")"
-    old_pool="$(grep -E '^_apt_pool=' "$PKGBUILD" | head -1 | sed -E 's/^_apt_pool="(.*)"$/\1/')"
-    if [[ -n "$old_pool" && "$old_pool" != "$new_pool" ]]; then
-        echo "Pool changed: $old_pool -> $new_pool"
-        sed -i -E "s|^_apt_pool=.*|_apt_pool=\"$new_pool\"|" "$PKGBUILD"
-    fi
 fi
 
 echo "Done."

@@ -1,4 +1,5 @@
-# Maintainer: bermudi <github.igizp@dabg.uk>
+# Maintainer: Anyx
+# Contributor: bermudi <github.igizp@dabg.uk>
 # Auto-updated by GitHub Actions (see .github/workflows/opencode2-bin.yml)
 
 pkgname=opencode2-bin
