@@ -1,7 +1,7 @@
-# aur-packages
+# opencode2-bin
 
-AUR package repo for `opencode2-bin`. The repo root is the package directory,
-and is the source of truth for its `PKGBUILD`, `.SRCINFO`, and auxiliary files.
+AUR package repo for `opencode2-bin` (originally [bermudi/aur-packages](https://github.com/bermudi/aur-packages/tree/9e323b556e17d1f0d5df2877d7c402e34b80933c)). 
+The repo root is the package directory, and is the source of truth for its `PKGBUILD`, `.SRCINFO`, and auxiliary files.
 GitHub Actions keep the AUR in sync.
 
 ## Layout
